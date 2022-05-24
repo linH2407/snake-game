@@ -7,20 +7,18 @@ import {
   SCALE,
   SPEED,
   DIRECTIONS,
-  DIRECT,
 } from "./constants";
 
 const App = () => {
   const canvasRef = useRef();
   const [snake, setSnake] = useState(SNAKE_START);
   const [apple, setApple] = useState(APPLE_START);
-  const [dir, setDir] = useState([0, -1]);
+  const [direction, setDirection] = useState([0, -1]);
   const [speed, setSpeed] = useState(null);
   const [gameOver, setGameOver] = useState(false);
   const [score, setScore] = useState(0);
-  const [pause, setPause] = useState(false);
+  const [move, setMove] = useState([]);
 
-  
   useEffect(() => {
     const context = canvasRef.current.getContext("2d");
     context.setTransform(SCALE, 0, 0, SCALE, 0, 0);
@@ -38,14 +36,28 @@ const App = () => {
     setSpeed(null);
     setGameOver(true);
   };
-
   const moveSnake = ({ keyCode }) => {
-    (keyCode >= 37 && keyCode <= 40 && setDir(DIRECTIONS[keyCode])) ||
-      (keyCode === 87 &&
-        keyCode === 83 &&
-        keyCode === 65 &&
-        keyCode === 68 &&
-        setDir(DIRECT[keyCode]));
+
+    if (keyCode>=37 && keyCode<=40) {
+
+      setMove(move => [...move, keyCode]);
+      if(move[move.length-1]===37 && keyCode === 39 ) return DIRECTIONS[37];
+      if(move[move.length-1]===39 && keyCode === 37 ) return DIRECTIONS[39];
+      if(move[move.length-1]===38 && keyCode === 40 ) return DIRECTIONS[38];
+      if(move[move.length-1]===40 && keyCode === 38 ) return DIRECTIONS[40];
+      // console.log("key:",keyCode);
+      // console.log(move);
+      // console.log(move[move.length-1]);
+      // console.log("-------------------------");
+      setDirection(DIRECTIONS[keyCode])        
+          
+    }
+    if (keyCode === 32 || gameOver) {
+      setSpeed(null);
+    }
+    if (speed === null && keyCode === 32 && gameOver === false) {
+      setSpeed(SPEED);
+    }
   };
 
   const createApple = () =>
@@ -82,7 +94,10 @@ const App = () => {
 
   const gameLoop = () => {
     const snakeCopy = JSON.parse(JSON.stringify(snake));
-    const newSnakeHead = [snakeCopy[0][0] + dir[0], snakeCopy[0][1] + dir[1]];
+    const newSnakeHead = [
+      snakeCopy[0][0] + direction[0],
+      snakeCopy[0][1] + direction[1],
+    ];
     snakeCopy.unshift(newSnakeHead);
     if (checkCollision(newSnakeHead)) endGame();
     if (!checkAppleCollision(snakeCopy)) snakeCopy.pop();
@@ -92,20 +107,18 @@ const App = () => {
   const startGame = () => {
     setSnake(SNAKE_START);
     setApple(APPLE_START);
-    setDir([0, -1]);
+    setDirection([0, -1]);
     setSpeed(SPEED);
     setGameOver(false);
-    setScore(score);
-    setPause(true);
-  };
-  const pauseGame = () => {
-    setSpeed(null);
-  };
-  const playGameAgain = () => {
-    setSpeed(SPEED);
+    setScore(0);
   };
 
-  
+  const playGameAgain = ({ keyCode }) => {
+    if (gameOver && keyCode === 13) {
+      startGame();
+      setScore(0);
+    }
+  };
 
   return (
     <div className=" mt-8 text-center">
@@ -115,7 +128,9 @@ const App = () => {
         role="button"
         tabIndex="0"
         onKeyDown={(e) => moveSnake(e)}
-        className=""
+        onFocus={startGame}
+        onKeyUp={(e) => playGameAgain(e)}
+        className="outline-none"
       >
         <canvas
           style={{ border: "1px solid black" }}
@@ -126,35 +141,13 @@ const App = () => {
         />
 
         {gameOver && (
-          <div className="text-2xl mt-4 font-semibold">GAME OVER!</div>
-        )}
-        <div className="w-[400px] mx-auto">
-          <div className="flex justify-between ">
-            <button
-              onClick={startGame}
-              className="bg-gray-800 text-white px-3 py-1 rounded-md font-semibold border-none outline-none hover:bg-black mt-4"
-            >
-              Start Game
-            </button>
-
-            {pause && (
-              <div className="flex gap-2">
-                <button
-                  onClick={pauseGame}
-                  className="bg-gray-800 text-white px-3 py-1 rounded-md font-semibold border-none outline-none hover:bg-black mt-4"
-                >
-                  Pause
-                </button>
-                <button
-                  onClick={playGameAgain}
-                  className="bg-gray-800 text-white px-4 py-1 rounded-md font-semibold border-none outline-none hover:bg-black mt-4"
-                >
-                  Play
-                </button>
-              </div>
-            )}
+          <div className="">
+            <p className="mt-4 underline underline-offset-1 ">
+              Press enter to restart the game
+            </p>
+            <p className="text-2xl mt-4 font-semibold">GAME OVER!</p>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );

@@ -11,17 +11,8 @@ const DIRECTIONS = {
   40: [0, 1], // down
   37: [-1, 0], // left
   39: [1, 0], // right
-  // 87: [0, -1], //w
-  // 83: [0, 1], //s
-  // 65: [-1, 0], //a
-  // 68: [0, 1], //d
 };
-const DIRECT = {
-  87: [0, -1], //w
-  83: [0, 1], //s
-  65: [-1, 0], //a
-  68: [0, 1], //d
-}
+
 export {
   CANVAS_SIZE,
   SNAKE_START,
@@ -29,5 +20,4 @@ export {
   SCALE,
   SPEED,
   DIRECTIONS,
-  DIRECT
 };
