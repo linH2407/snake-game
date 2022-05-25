@@ -17,7 +17,7 @@ const App = () => {
   const [speed, setSpeed] = useState(null);
   const [gameOver, setGameOver] = useState(false);
   const [score, setScore] = useState(0);
-  const [move, setMove] = useState([]);
+  const [move, setMove] = useState(38);
 
   useEffect(() => {
     const context = canvasRef.current.getContext("2d");
@@ -40,15 +40,16 @@ const App = () => {
 
     if (keyCode>=37 && keyCode<=40) {
 
-      setMove(move => [...move, keyCode]);
-      if(move[move.length-1]===37 && keyCode === 39 ) return DIRECTIONS[37];
-      if(move[move.length-1]===39 && keyCode === 37 ) return DIRECTIONS[39];
-      if(move[move.length-1]===38 && keyCode === 40 ) return DIRECTIONS[38];
-      if(move[move.length-1]===40 && keyCode === 38 ) return DIRECTIONS[40];
-      // console.log("key:",keyCode);
-      // console.log(move);
-      // console.log(move[move.length-1]);
-      // console.log("-------------------------");
+      setMove(keyCode);
+      // if( keyCode === 40) return DIRECTIONS[38];
+      if((move===37 && keyCode === 39 )|| move===keyCode ) return DIRECTIONS[37];
+      if((move===39 && keyCode === 37) || move===keyCode) return DIRECTIONS[39];
+      if((move===38 && keyCode === 40) || move===keyCode) return DIRECTIONS[38];
+      if((move===40 && keyCode === 38) || move===keyCode) return DIRECTIONS[40];
+      console.log("key:",keyCode);
+      console.log(move);
+      console.log('====================================');
+      
       setDirection(DIRECTIONS[keyCode])        
           
     }
